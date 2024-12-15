@@ -1,12 +1,13 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
+from .views import SellerViewSet
+from rest_framework.routers import DefaultRouter
 
 app_name = 'mongodb_app'
 
+router = DefaultRouter()
+router.register(r'sellers', SellerViewSet, basename='seller')
+
 urlpatterns = [
-    path('get/', views.get_all_sellers, name='get_all_sellers'),
-    path('get/<int:seller_id>/', views.get_seller, name='get_seller'),
-    path('create/', views.create_seller, name='create_seller'),
-    path('update/<int:seller_id>/', views.update_seller, name='update_seller'),
-    path('delete/<int:seller_id>/', views.delete_seller, name='delete_seller'),
+    path('', include(router.urls)),
 ]

@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.core.exceptions import ValidationError
 from django.views.decorators.csrf import csrf_exempt
+from mongodb_app.models import Seller
 from .models import Car, Client, Order
 import json
 
@@ -178,6 +179,7 @@ def get_all_orders(request):
         'client__full_name',
         'car',
         'car__car_type',
+        'seller',
         'order_date'
     ))
     return JsonResponse(res, safe=False, status=200)
@@ -191,7 +193,8 @@ def get_order(request, order_id):
             'client__full_name',
             'car',
             'car__car_type',
-            'order_date'
+            'seller',
+            'order_date',
         ).get(id=order_id)
         return JsonResponse(res, status=200)
     except Order.DoesNotExist:
@@ -208,14 +211,16 @@ def create_order(request):
 
         client = Client.objects.get(id=data['client'])
         car = Car.objects.get(id=data['car'])
+        seller = Seller.objects.get(seller_id=data['seller'])
 
         order = Order.objects.create(
             client=client,
-            car=car
+            car=car,
+            seller=seller.seller_id
         )
     except json.JSONDecodeError:
         return JsonResponse({'error': 'Invalid JSON'}, status=400)
-    except (Client.DoesNotExist, Car.DoesNotExist) as e:
+    except (Client.DoesNotExist, Car.DoesNotExist, Seller.DoesNotExist) as e:
         return JsonResponse({'error': f'Wrong value: {e}'}, status=400)
     except KeyError as e:
         return JsonResponse({'error': f'Missing field: {e}'}, status=400)

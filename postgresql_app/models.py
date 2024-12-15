@@ -1,4 +1,5 @@
 from django.db import models
+from mongodb_app.models import Seller
 
 
 class Car(models.Model):
@@ -18,4 +19,5 @@ class Client(models.Model):
 class Order(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
     car = models.ForeignKey(Car, on_delete=models.CASCADE)
+    seller = models.PositiveIntegerField(null=True)
     order_date = models.DateTimeField(auto_now_add=True)

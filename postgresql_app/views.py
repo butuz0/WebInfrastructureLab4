@@ -233,6 +233,7 @@ def create_order(request):
             'client_full_name': order.client.full_name,
             'car_id': order.car.id,
             'car_type': order.car.car_type,
+            'seller': order.seller,
             'order_date': order.order_date
         }, status=201)
 
@@ -258,6 +259,7 @@ def update_order(request, order_id):
             'id': order.id,
             'client': order.client,
             'car': order.car,
+            'seller': order.seller,
             'order_date': order.order_date
         }, status=200)
 

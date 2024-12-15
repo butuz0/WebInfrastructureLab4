@@ -1,18 +1,18 @@
 from django.db import models
 
 
-class Client(models.Model):
-    full_name = models.CharField(max_length=255)
-    age = models.PositiveIntegerField()
-    gender = models.CharField(max_length=10, choices=[('Male', 'Male'), ('Female', 'Female')])
-    car_bought = models.ForeignKey(Car, on_delete=models.CASCADE)
-
-
 class Car(models.Model):
     car_type = models.CharField(max_length=50)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     mileage = models.PositiveIntegerField()
     condition = models.CharField(max_length=50)
+
+
+class Client(models.Model):
+    full_name = models.CharField(max_length=255)
+    age = models.PositiveIntegerField()
+    gender = models.CharField(max_length=10, choices=[('Male', 'Male'), ('Female', 'Female')])
+    email = models.EmailField(null=True)
 
 
 class Order(models.Model):

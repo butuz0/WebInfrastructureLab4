@@ -1,4 +1,5 @@
 from rest_framework import viewsets
+from django_filters.rest_framework import DjangoFilterBackend
 from .serializers import CarSerializer, ClientSerializer, OrderSerializer
 from .models import Car, Client, Order
 
@@ -16,3 +17,5 @@ class ClientViewSet(viewsets.ModelViewSet):
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.select_related('client', 'car')
     serializer_class = OrderSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['client', 'car', 'seller']

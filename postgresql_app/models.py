@@ -21,3 +21,7 @@ class Order(models.Model):
     car = models.ForeignKey(Car, on_delete=models.CASCADE)
     seller = models.PositiveIntegerField(null=True)
     order_date = models.DateTimeField(auto_now_add=True)
+
+    @property
+    def seller_instance(self):
+        return Seller.objects.get(seller_id=self.seller)

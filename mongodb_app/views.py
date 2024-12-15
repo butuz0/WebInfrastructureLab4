@@ -11,6 +11,7 @@ from .serializers import SellerSerializer
 class SellerViewSet(viewsets.ModelViewSet):
     queryset = Seller.objects.all()
     serializer_class = SellerSerializer
+    lookup_field = 'seller_id'
 
     def validate_seller_id(self, value):
         if value in list(Seller.objects.values_list('seller_id', flat=True)):

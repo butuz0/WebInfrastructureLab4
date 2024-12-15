@@ -19,6 +19,6 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('mongo/', include('mongodb_app.urls', namespace='mongodb_app')),
-    path('postgres/', include('postgresql_app.urls', namespace='postgresql_app')),
+    path('sellers/', include('mongodb_app.urls', namespace='mongodb_app')),
+    path('', include('postgresql_app.urls', namespace='postgresql_app')),
 ]

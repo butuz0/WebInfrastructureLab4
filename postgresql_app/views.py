@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
+from django.core.exceptions import ValidationError
 from django.views.decorators.csrf import csrf_exempt
 from .models import Car, Client, Order
 import json
@@ -89,13 +90,13 @@ def delete_car(request, car_id):
 
 
 def get_all_clients(request):
-    res = list(Client.objects.values('full_name', 'age', 'gender', 'email'))
+    res = list(Client.objects.values('id', 'full_name', 'age', 'gender', 'email'))
     return JsonResponse(res, safe=False, status=200)
 
 
 def get_client(request, client_id):
     try:
-        res = Client.objects.values('full_name', 'age', 'gender', 'email').get(id=client_id)
+        res = Client.objects.values('id', 'full_name', 'age', 'gender', 'email').get(id=client_id)
         return JsonResponse(res, status=200)
     except Client.DoesNotExist:
         return JsonResponse({'error': 'Data not found'}, status=404)
@@ -165,6 +166,105 @@ def delete_client(request, client_id):
     try:
         Client.objects.get(id=client_id).delete()
     except Client.DoesNotExist:
+        return JsonResponse({'error': 'Data not found'}, status=404)
+    else:
+        return JsonResponse({'message': 'Deleted successfully'}, status=200)
+
+
+def get_all_orders(request):
+    res = list(Order.objects.select_related('client', 'car').values(
+        'id',
+        'client',
+        'client__full_name',
+        'car',
+        'car__car_type',
+        'order_date'
+    ))
+    return JsonResponse(res, safe=False, status=200)
+
+
+def get_order(request, order_id):
+    try:
+        res = Order.objects.select_related('client', 'car').values(
+            'id',
+            'client',
+            'client__full_name',
+            'car',
+            'car__car_type',
+            'order_date'
+        ).get(id=order_id)
+        return JsonResponse(res, status=200)
+    except Order.DoesNotExist:
+        return JsonResponse({'error': 'Data not found'}, status=404)
+
+
+@csrf_exempt
+def create_order(request):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Only POST method is allowed'}, status=405)
+
+    try:
+        data = json.loads(request.body.decode('utf-8'))
+
+        client = Client.objects.get(id=data['client'])
+        car = Car.objects.get(id=data['car'])
+
+        order = Order.objects.create(
+            client=client,
+            car=car
+        )
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+    except (Client.DoesNotExist, Car.DoesNotExist) as e:
+        return JsonResponse({'error': f'Wrong value: {e}'}, status=400)
+    except KeyError as e:
+        return JsonResponse({'error': f'Missing field: {e}'}, status=400)
+    except (ValueError, ValidationError) as e:
+        return JsonResponse({'error': f'Wrong field value: {e}'}, status=400)
+    else:
+        return JsonResponse({
+            'id': order.id,
+            'client_id': order.client.id,
+            'client_full_name': order.client.full_name,
+            'car_id': order.car.id,
+            'car_type': order.car.car_type,
+            'order_date': order.order_date
+        }, status=201)
+
+
+@csrf_exempt
+def update_order(request, order_id):
+    if request.method != 'PUT':
+        return JsonResponse({'error': 'Only PUT method is allowed'}, status=405)
+
+    try:
+        order = Order.objects.get(id=order_id)
+        data = json.loads(request.body.decode('utf-8'))
+    except Order.DoesNotExist:
+        return JsonResponse({'error': 'Data not found'}, status=404)
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+    else:
+        for field in data:
+            setattr(order, field, data[field])
+        order.save()
+
+        return JsonResponse({
+            'id': order.id,
+            'client': order.client,
+            'car': order.car,
+            'order_date': order.order_date
+        }, status=200)
+
+
+@csrf_exempt
+def delete_order(request, order_id):
+    if request.method != 'DELETE':
+        return JsonResponse({'error': 'Only DELETE method is allowed'}, status=405)
+
+    try:
+        Order.objects.get(id=order_id).delete()
+    except Order.DoesNotExist:
         return JsonResponse({'error': 'Data not found'}, status=404)
     else:
         return JsonResponse({'message': 'Deleted successfully'}, status=200)

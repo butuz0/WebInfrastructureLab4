@@ -4,6 +4,7 @@ services:
   db_postgres:
     image: postgres:14.1-alpine
     container_name: db_postgres
+    restart: 'always'
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -11,32 +12,34 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - ./postgres:/var/lib/postgresql/data
 
   db_mongo:
     image: mongo:6.0
     container_name: db_mongo
+    restart: 'always'
     environment:
       MONGO_INITDB_ROOT_USERNAME: mongo
       MONGO_INITDB_ROOT_PASSWORD: mongo
     ports:
       - "27017:27017"
     volumes:
-      - mongo_data:/data/db
+      - ./mongo:/data/db
 
   web:
     build:
       context: .
     container_name: app
-    command: python manage.py runserver 0.0.0.0:8000
+    restart: 'always'
+    # command: python manage.py runserver 0.0.0.0:8000
+    command: >
+      sh -c "python manage.py makemigrations &&
+             python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
     volumes:
-      - .:/app
+      - ./app:/app
     ports:
       - "8000:8000"
     depends_on:
       - db_postgres
       - db_mongo
-
-volumes:
-  postgres_data:
-  mongo_data:

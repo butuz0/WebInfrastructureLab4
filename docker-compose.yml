@@ -48,7 +48,7 @@ services:
     container_name: front
     restart: 'always'
     volumes:
-      - ./front:/usr/share/nginx/html:ro
+      - ./front:/usr/share/nginx/html
     ports:
       - "8048:80"
     depends_on:

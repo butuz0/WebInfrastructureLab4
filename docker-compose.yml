@@ -42,3 +42,14 @@ services:
     depends_on:
       - db_postgres
       - db_mongo
+
+  frontend:
+    image: nginx:alpine
+    container_name: front
+    restart: 'always'
+    volumes:
+      - ./front:/usr/share/nginx/html:ro
+    ports:
+      - "8048:80"
+    depends_on:
+      - web

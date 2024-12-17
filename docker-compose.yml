@@ -9,6 +9,12 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: postgres_db
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 10s
+      retries: 5
+      start_period: 10s
+      timeout: 5s
     ports:
       - "5432:5432"
     volumes:
@@ -21,6 +27,12 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: mongo
       MONGO_INITDB_ROOT_PASSWORD: mongo
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      retries: 5
+      start_period: 10s
+      timeout: 5s
     ports:
       - "27017:27017"
     volumes:
@@ -32,7 +44,7 @@ services:
     container_name: app
     restart: 'always'
     command: >
-      sh -c "wait-for-it db_postgres:5432 -- wait-for-it db_mongo:27017 -- python manage.py makemigrations &&
+      sh -c "python manage.py makemigrations &&
              python manage.py migrate &&
              python manage.py runserver 0.0.0.0:8000"
     volumes:
@@ -40,8 +52,10 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      - db_postgres
-      - db_mongo
+      db_postgres:
+        condition: service_healthy
+      db_mongo:
+        condition: service_healthy
 
   frontend:
     image: nginx:alpine

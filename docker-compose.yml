@@ -31,7 +31,6 @@ services:
       context: .
     container_name: app
     restart: 'always'
-    # command: python manage.py runserver 0.0.0.0:8000
     command: >
       sh -c "wait-for-it db_postgres:5432 -- wait-for-it db_mongo:27017 -- python manage.py makemigrations &&
              python manage.py migrate &&

@@ -29,6 +29,11 @@ function displayOrderDetails(data) {
             <td>${order.client}</td>
             <td>${order.client_details.full_name}</td>
             <td>${order.client_details.email || 'N/A'}</td>
+            ${
+                order.client_details.image
+                    ? `<td style="padding: 0"><img src="data:image/jpeg;base64,${order.client_details.image}" alt="Car Image"></td>`
+                    : '<td>N/A</td>'
+            }
             <td>${order.seller_details.seller_id}</td>
             <td>${order.seller_details.full_name}</td>
             <td>${order.car}</td>

@@ -21,11 +21,14 @@ class Car(models.Model):
     image = models.ImageField(upload_to=upload_to, validators=[validate_image], blank=True, null=True)
 
 
+
 class Client(models.Model):
     full_name = models.CharField(max_length=255)
     age = models.PositiveIntegerField()
     gender = models.CharField(max_length=10, choices=[('Male', 'Male'), ('Female', 'Female')])
     email = models.EmailField(null=True)
+
+    image = models.BinaryField(blank=True, null=True, editable=True)
 
 
 class Order(models.Model):

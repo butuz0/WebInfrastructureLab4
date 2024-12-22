@@ -4,6 +4,8 @@ from .serializers import CarSerializer, ClientSerializer, OrderSerializer
 from .models import Car, Client, Order
 
 
+from rest_framework.parsers import MultiPartParser, FormParser
+
 class CarViewSet(viewsets.ModelViewSet):
     queryset = Car.objects.all()
     serializer_class = CarSerializer
@@ -12,7 +14,7 @@ class CarViewSet(viewsets.ModelViewSet):
 class ClientViewSet(viewsets.ModelViewSet):
     queryset = Client.objects.all()
     serializer_class = ClientSerializer
-
+    parser_classes = (MultiPartParser, FormParser)
 
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.select_related('client', 'car')

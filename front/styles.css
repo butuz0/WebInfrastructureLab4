@@ -65,3 +65,10 @@ tr:nth-child(even) {
 .filter-section button:hover {
     background-color: #0056b3;
 }
+
+#order-table img {
+    max-width: 200px;
+    max-height: 200px;
+    object-fit: cover;
+    margin: 0;
+}

@@ -13,7 +13,6 @@ class ClientViewSet(viewsets.ModelViewSet):
     queryset = Client.objects.all()
     serializer_class = ClientSerializer
 
-
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.select_related('client', 'car')
     serializer_class = OrderSerializer

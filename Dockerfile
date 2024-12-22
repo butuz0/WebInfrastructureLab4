@@ -5,7 +5,8 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y \
     gcc \
     libpq-dev \
-    build-essential
+    build-essential \
+    libmagic1
 
 COPY app/requirements.txt requirements.txt
 

@@ -8,13 +8,20 @@ from .models import Car, Client, Order
 class CarSerializer(serializers.ModelSerializer):
     class Meta:
         model = Car
-        fields = ['id', 'car_type', 'price', 'mileage', 'condition']
-
+        fields = ['id', 'car_type', 'price', 'mileage', 'condition', 'image']
 
 class ClientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Client
-        fields = ['id', 'full_name', 'age', 'gender', 'email']
+        fields = ['id', 'full_name', 'age', 'gender', 'email', 'image']
+
+    def run_validation(self, data):
+        print(data['image'].content_type)
+        if not data['image'].content_type.startswith('image'):
+            raise ValidationError("Upload a valid image. The file you uploaded was either not an image or a corrupted image.")
+        data = super().run_validation(data)
+        data['image'] = data['image'].read()
+        return data
 
 
 class OrderSerializer(serializers.ModelSerializer):

@@ -8,7 +8,7 @@ from .models import Car, Client, Order
 class CarSerializer(serializers.ModelSerializer):
     class Meta:
         model = Car
-        fields = ['id', 'car_type', 'price', 'mileage', 'condition']
+        fields = ['id', 'car_type', 'price', 'mileage', 'condition', 'image']
 
 
 class ClientSerializer(serializers.ModelSerializer):

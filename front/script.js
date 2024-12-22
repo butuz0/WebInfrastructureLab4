@@ -34,6 +34,11 @@ function displayOrderDetails(data) {
             <td>${order.car}</td>
             <td>${order.car_details.car_type}</td>
             <td>$${order.car_details.price}</td>
+            ${
+                order.car_details.image
+                    ? `<td style="padding: 0"><img src="${order.car_details.image}" alt="Car Image"></td>`
+                    : '<td>N/A</td>'
+            }
             <td>${new Date(order.order_date).toLocaleString()}</td>
         `;
 

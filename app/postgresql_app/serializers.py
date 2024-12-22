@@ -3,34 +3,12 @@ from django_filters.rest_framework import DjangoFilterBackend
 from mongodb_app.models import Seller
 from mongodb_app.serializers import SellerSerializer
 from .models import Car, Client, Order
-from django.core.exceptions import ValidationError
 
 
 class CarSerializer(serializers.ModelSerializer):
     class Meta:
         model = Car
         fields = ['id', 'car_type', 'price', 'mileage', 'condition', 'image']
-
-def set_value(dictionary, keys, value):
-    """
-    Similar to Python's built in `dictionary[key] = value`,
-    but takes a list of nested keys instead of a single key.
-
-    set_value({'a': 1}, [], {'b': 2}) -> {'a': 1, 'b': 2}
-    set_value({'a': 1}, ['x'], 2) -> {'a': 1, 'x': 2}
-    set_value({'a': 1}, ['x', 'y'], 2) -> {'a': 1, 'x': {'y': 2}}
-    """
-    if not keys:
-        dictionary.update(value)
-        return
-
-    for key in keys[:-1]:
-        if key not in dictionary:
-            dictionary[key] = {}
-        dictionary = dictionary[key]
-
-    dictionary[keys[-1]] = value
-
 
 class ClientSerializer(serializers.ModelSerializer):
     class Meta:

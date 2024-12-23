@@ -4,6 +4,8 @@ from mongodb_app.models import Seller
 from mongodb_app.serializers import SellerSerializer
 from .models import Car, Client, Order
 
+FILE_ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif']
+
 
 class CarSerializer(serializers.ModelSerializer):
     class Meta:
@@ -18,8 +20,9 @@ class ClientSerializer(serializers.ModelSerializer):
 
     def run_validation(self, data):
         if data.get('image'):
-            if not data['image'].content_type.startswith('image'):
-                raise serializers.ValidationError({'image': ["Upload a valid image. The file you uploaded was either not an image or a corrupted image."]})
+            if data['image'].content_type not in FILE_ALLOWED_TYPES:
+                raise serializers.ValidationError({'image': ['Upload a valid image. The file you uploaded was either '
+                                                             'not an image or a corrupted image.']})
             data = super().run_validation(data)
             data['image'] = data['image'].read()
             return data
